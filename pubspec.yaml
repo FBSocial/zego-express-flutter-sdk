@@ -34,6 +34,9 @@ flutter:
       android:
         package: im.zego.zego_express_engine
         pluginClass: ZegoExpressEnginePlugin
+      ohos:
+        package: im.zego.zego_express_engine
+        pluginClass: ZegoExpressFlutterSdkPlugin
       ios:
         pluginClass: ZegoExpressEnginePlugin
       macos:
