@@ -47,7 +47,61 @@
       }
     ],
     "requestPermissions": [
-      {"name" :  "ohos.permission.INTERNET"},
+      {
+        "name": "ohos.permission.MICROPHONE",
+        // 麦克风权限
+        "reason": "$string:app_name",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
+          "when": "inuse"
+        }
+      },
+      {
+        "name": "ohos.permission.INTERNET",
+        // 网络权限
+        "reason": "$string:app_name",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.CAMERA",
+        // 摄像头权限
+        "reason": "$string:app_name",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
+          "when": "inuse"
+        }
+      },
+      {
+        "name": "ohos.permission.ACCESS_BLUETOOTH",
+        // 蓝牙权限
+        "reason": "$string:app_name",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.GET_NETWORK_INFO",
+        // 网络信息权限
+        "reason": "$string:app_name",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
+          "when": "always"
+        }
+      }
     ]
   }
 }

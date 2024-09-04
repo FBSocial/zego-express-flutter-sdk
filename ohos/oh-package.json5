@@ -6,6 +6,15 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ohos/flutter_ohos": "file:./har/flutter.har"
-  }
+    "@ohos/flutter_ohos": "file:./har/flutter.har",
+    "@ohos/ZegoExpressEngine": "file:./har/ZegoExpressEngine.har"
+  },
+  "metadata": {
+    "sourceRoots": [
+      "./src/main"
+    ]
+  },
+  "compatibleSdkVersion": 12,
+  "compatibleSdkType": "HarmonyOS",
+  "obfuscated": false
 }

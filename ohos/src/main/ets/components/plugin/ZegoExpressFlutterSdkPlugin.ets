@@ -7,9 +7,13 @@ import {
   MethodResult,
 } from '@ohos/flutter_ohos';
 
+import ZegoExpressEngineMethodHandler from '../internal/ZegoExpressEngineMethodHandler'
+import { zegoLogger } from '../internal/ZegoLog'
+
 /** ZegoExpressFlutterSdkPlugin **/
 export default class ZegoExpressFlutterSdkPlugin implements FlutterPlugin, MethodCallHandler {
   private channel: MethodChannel | null = null;
+  private methodHandler: ZegoExpressEngineMethodHandler | null = null;
 
   constructor() {
   }
@@ -19,8 +23,9 @@ export default class ZegoExpressFlutterSdkPlugin implements FlutterPlugin, Metho
   }
 
   onAttachedToEngine(binding: FlutterPluginBinding): void {
-    this.channel = new MethodChannel(binding.getBinaryMessenger(), "zego_express_flutter_sdk");
+    this.channel = new MethodChannel(binding.getBinaryMessenger(), "plugins.zego.im/zego_express_engine");
     this.channel.setMethodCallHandler(this)
+    this.methodHandler = new ZegoExpressEngineMethodHandler();
   }
 
   onDetachedFromEngine(binding: FlutterPluginBinding): void {
@@ -30,10 +35,7 @@ export default class ZegoExpressFlutterSdkPlugin implements FlutterPlugin, Metho
   }
 
   onMethodCall(call: MethodCall, result: MethodResult): void {
-    if (call.method == "getPlatformVersion") {
-      result.success("OpenHarmony ^ ^ ")
-    } else {
-      result.notImplemented()
-    }
+    zegoLogger.debug(call.method)
+    this.methodHandler?.onMethodCall(call, result)
   }
 }
