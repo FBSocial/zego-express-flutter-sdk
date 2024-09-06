@@ -13,7 +13,7 @@ class ZegoExpressTextureRenderer {
   factory ZegoExpressTextureRenderer() => _instance;
 
   void init() async {
-    if (!kIsWeb && !kIsAndroid) {
+    if (!kIsWeb && !kIsAndroid && !kIsOHOS) {
       _streamSubscriptionTextureRendererController ??=
           _textureRendererControllerEvent
               .receiveBroadcastStream()

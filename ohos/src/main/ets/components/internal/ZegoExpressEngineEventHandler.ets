@@ -919,8 +919,8 @@ export default class ZegoExpressEngineEventHandler {
     let arrayList: ArrayList<HashMap<String, Object>> = new ArrayList()
     for (let stream of streamList) {
       let userMap: HashMap<String, Object> = new HashMap()
-      userMap["userID"] = stream.user.userID
-      userMap["userName"] = stream.user.userName
+      userMap.set('userID', stream.user.userID)
+      userMap.set('userName', stream.user.userName)
 
       let map: HashMap<string, Any> = new HashMap()
       map.set('user', userMap)
@@ -936,8 +936,8 @@ export default class ZegoExpressEngineEventHandler {
 
     for (let extraInfo of roomExtraInfoList) {
       let userMap: HashMap<String, Object> = new HashMap()
-      userMap["userID"] = extraInfo.updateUser.userID
-      userMap["userName"] = extraInfo.updateUser.userName
+      userMap.set('userID', extraInfo.updateUser.userID)
+      userMap.set('userName', extraInfo.updateUser.userName)
 
       let map: HashMap<string, Object> = new HashMap()
       map.set('key', extraInfo.key)

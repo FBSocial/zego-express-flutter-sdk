@@ -1,4 +1,4 @@
-import { Any, FlutterPluginBinding, MethodCall, MethodResult } from '@ohos/flutter_ohos';
+import { Any, FlutterPluginBinding, MethodCall, MethodResult, TextureRegistry } from '@ohos/flutter_ohos';
 import ZegoExpressEngine, {
   ZegoScenario,
   ZegoEngineProfile,
@@ -6,16 +6,28 @@ import ZegoExpressEngine, {
   ZegoUser,
   ZegoRoomConfig,
   ZegoRoomState,
+  ZegoPlayerConfig,
+  ZegoStreamResourceMode,
+  ZegoVideoCodecID,
+  ZegoResourceType,
+  ZegoStreamResourceSwitchMode,
+  ZegoStreamResourceType,
+  ZegoCDNConfig,
+  ZegoViewMode,
+  ZegoView,
 } from '@ohos/ZegoExpressEngine';
 import { EventSink } from '@ohos/flutter_ohos/src/main/ets/plugin/common/EventChannel'
 import { zegoLogger } from './ZegoLog';
 import { zegoExpressEngineEventHandler } from './ZegoExpressEngineEventHandler';
 import { HashMap } from '@kit.ArkTS';
+import { zegoTextureRendererController } from './ZegoTextureRendererController';
 
 export default class ZegoExpressEngineMethodHandler {
   private context: Context | null = null
   private pluginBinding: FlutterPluginBinding | null = null
   private pluginReported: boolean = false
+  private textureRegistry: TextureRegistry | null = null
+  private enablePlatformView: boolean = false
 
   onMethodCall(call: MethodCall, result: MethodResult, binding: FlutterPluginBinding | null,
     sink: EventSink | null): void {
@@ -27,6 +39,10 @@ export default class ZegoExpressEngineMethodHandler {
       this.setPluginVersion(call, result)
     } else if (call.method == 'loginRoom') {
       this.loginRoom(call, result)
+    } else if (call.method == 'createTextureRenderer') {
+      this.createTextureRenderer(call, result)
+    } else if (call.method == 'startPlayingStream') {
+      this.startPlayingStream(call, result)
     } else {
       result.notImplemented()
     }
@@ -53,6 +69,7 @@ export default class ZegoExpressEngineMethodHandler {
 
     this.pluginBinding = binding
     this.context = binding?.getApplicationContext() ?? null
+    this.textureRegistry = binding?.getTextureRegistry() ?? null
     zegoExpressEngineEventHandler.eventSink = sink
 
     let profileMap: Map<string, Any> = call.argument('profile')
@@ -60,7 +77,7 @@ export default class ZegoExpressEngineMethodHandler {
     let appSign: string = profileMap.get('appSign')
     let scenarioValue = Math.min(10, Math.max(0, profileMap.get('scenario')))
     let zegoScenario: ZegoScenario = scenarioValue as ZegoScenario
-    let enablePlatformView: boolean = profileMap.get('enablePlatformView')
+    this.enablePlatformView = profileMap.get('enablePlatformView')
 
     let profile: ZegoEngineProfile = new ZegoEngineProfile(appID, appSign, zegoScenario, this.context)
     ZegoExpressEngine.createEngine(profile).then((engineInstance) => {
@@ -103,6 +120,64 @@ export default class ZegoExpressEngineMethodHandler {
         map.set('extendedData', extendedData.toString())
         result.success(map)
       })
+  }
+
+  createTextureRenderer(call: MethodCall, result: MethodResult): void {
+    let width: number = call.argument('width') as number
+    let height: number = call.argument('height') as number
+    let textureRegistry = this.pluginBinding?.getTextureRegistry()
+    let textureID: number = zegoTextureRendererController.createTextureRenderer(textureRegistry, width, height)
+    zegoLogger.debug("[createTextureRenderer][Result] w: " + width + ", h: " + height + ", textureID: " + textureID);
+    result.success(textureID)
+  }
+
+  startPlayingStream(call: MethodCall, result: MethodResult): void {
+    let streamID: string = call.argument('streamID')
+
+    // ZegoPlayerConfig
+    let playerConfig: ZegoPlayerConfig | null = null
+    let playerConfigMap: Map<string, Any> | null = call.argument('config')
+    if (playerConfigMap != null && playerConfigMap.size > 0) {
+      playerConfig = new ZegoPlayerConfig()
+      playerConfig.resourceMode = playerConfigMap.get('resourceMode') as ZegoStreamResourceMode
+      playerConfig.videoCodecID = playerConfigMap.get("videoCodecID") as ZegoVideoCodecID
+      playerConfig.roomID = playerConfigMap.get('roomID')
+      playerConfig.sourceResourceType = playerConfigMap.get("sourceResourceType") as ZegoResourceType
+      playerConfig.codecTemplateID = playerConfigMap.get("codecTemplateID")
+      playerConfig.resourceSwitchMode = playerConfigMap.get("resourceSwitchMode") as ZegoStreamResourceSwitchMode
+      playerConfig.resourceWhenStopPublish = playerConfigMap.get("resourceWhenStopPublish") as ZegoStreamResourceType
+      let cdnConfigMap: Map<string, Any> | null = call.argument('cdnConfig')
+      if (cdnConfigMap != null && cdnConfigMap.size > 0) {
+        let cdnConfig = new ZegoCDNConfig()
+        cdnConfig.url = cdnConfigMap.get('url')
+        cdnConfig.authParam = cdnConfigMap.get('authParam')
+        playerConfig.cdnConfig = cdnConfig
+      }
+    }
+
+    // ZegoCanvas
+    let canvasMap: Map<string, Any> | null = call.argument('canvas')
+    if (canvasMap != null && canvasMap.size > 0) {
+      let viewID: number = canvasMap.get('view')
+      let viewMode = canvasMap.get('viewMode') as ZegoViewMode
+      let backgroundColor: number = canvasMap.get("backgroundColor")
+      let alphaBlend: boolean = canvasMap.get("alphaBlend")
+      if (this.enablePlatformView) {
+        result.error('[startPlayingStream]', 'not support platform view', '')
+        return
+      }
+      let textureRenderer = zegoTextureRendererController.getTextureRenderer(viewID)
+      let zegoView: ZegoView = new ZegoView()
+      // zegoView.view = textureRenderer.surfaceID.toString()
+      zegoView.view = 'zegoView'
+      zegoView.viewMode = viewMode
+      zegoView.backgroundColor = backgroundColor
+      zegoView.alphaBlend = alphaBlend
+      ZegoExpressEngine.getInstance()?.startPlayingStream(streamID, zegoView, playerConfig)
+    } else {
+      ZegoExpressEngine.getInstance()?.startPlayingStream(streamID, null, playerConfig)
+    }
+    result.success(null)
   }
 
   private reportPluginInfo(): void {

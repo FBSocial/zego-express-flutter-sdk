@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:zego_express_engine/zego_express_engine.dart' show ZegoScenario;
+import 'package:zego_express_engine_example/utils/zego_utils.dart';
 
 class ZegoConfig {
   static final ZegoConfig instance = ZegoConfig._internal();
@@ -17,7 +18,7 @@ class ZegoConfig {
   String token = "";
 
   ZegoScenario scenario = ZegoScenario.Default;
-  bool enablePlatformView = false;
+  bool enablePlatformView = ZegoUtils.isOHOS;
 
   String userID = Platform.isAndroid ? 'android_user_id' : 'ohos_user_id';
   String userName = Platform.isAndroid ? 'android_user_name' : 'ohos_user_name';

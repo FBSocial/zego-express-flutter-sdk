@@ -7,3 +7,4 @@ bool get kIsIOS => !kIsWeb && Platform.isIOS;
 bool get kIsLinux => !kIsWeb && Platform.isLinux;
 bool get kIsMacOS => !kIsWeb && Platform.isMacOS;
 bool get kIsWindows => !kIsWeb && Platform.isWindows;
+bool get kIsOHOS => !kIsWeb && Platform.operatingSystem.toLowerCase().contains('ohos');
