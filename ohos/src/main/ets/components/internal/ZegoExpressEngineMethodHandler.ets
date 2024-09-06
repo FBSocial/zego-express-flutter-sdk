@@ -1,8 +1,16 @@
 import { Any, FlutterPluginBinding, MethodCall, MethodResult } from '@ohos/flutter_ohos';
-import ZegoExpressEngine, { ZegoScenario, ZegoEngineProfile, ZegoEngineConfig } from '@ohos/ZegoExpressEngine';
+import ZegoExpressEngine, {
+  ZegoScenario,
+  ZegoEngineProfile,
+  ZegoEngineConfig,
+  ZegoUser,
+  ZegoRoomConfig,
+  ZegoRoomState,
+} from '@ohos/ZegoExpressEngine';
 import { EventSink } from '@ohos/flutter_ohos/src/main/ets/plugin/common/EventChannel'
 import { zegoLogger } from './ZegoLog';
 import { zegoExpressEngineEventHandler } from './ZegoExpressEngineEventHandler';
+import { HashMap } from '@kit.ArkTS';
 
 export default class ZegoExpressEngineMethodHandler {
   private context: Context | null = null
@@ -15,6 +23,10 @@ export default class ZegoExpressEngineMethodHandler {
       this.getVersion(call, result)
     } else if (call.method == 'createEngineWithProfile') {
       this.createEngineWithProfile(call, result, binding, sink)
+    } else if (call.method == 'setPluginVersion') {
+      this.setPluginVersion(call, result)
+    } else if (call.method == 'loginRoom') {
+      this.loginRoom(call, result)
     } else {
       result.notImplemented()
     }
@@ -57,6 +69,40 @@ export default class ZegoExpressEngineMethodHandler {
         zegoExpressEngineEventHandler.initSDKEvent(engineInstance)
       }
     })
+    result.success(null);
+  }
+
+  setPluginVersion(call: MethodCall, result: MethodResult): void {
+    let version: string = call.argument('version')
+    zegoLogger.debug('*** Plugin Version: ' + version)
+    result.success(null)
+  }
+
+  loginRoom(call: MethodCall, result: MethodResult): void {
+    let roomID: string = call.argument('roomID')
+
+    let userMap: Map<string, Any> | null = call.argument('user')
+    let user = new ZegoUser()
+    if (userMap != null && userMap.size != 0) {
+      user.userID = userMap.get('userID')
+      user.userName = userMap.get('userName')
+    }
+
+    let configMap: Map<string, Any> | null = call.argument('config')
+    let roomConfig: ZegoRoomConfig = new ZegoRoomConfig()
+    if (configMap != null && configMap.size != 0) {
+      roomConfig.isUserStatusNotify = (configMap.get('isUserStatusNotify') as boolean | null) ?? false
+      roomConfig.maxMemberCount = (configMap.get('maxMemberCount') as number | null) ?? 0
+      roomConfig.token = configMap.get('token')
+    }
+    ZegoExpressEngine.getInstance()?.loginRoom(roomID, user, roomConfig)
+    ZegoExpressEngine.getInstance()?.on('onRoomStateUpdate',
+      (roomID: string, state: ZegoRoomState, errorCode: number, extendedData: string) => {
+        let map: HashMap<string, Any> = new HashMap()
+        map.set('errorCode', errorCode)
+        map.set('extendedData', extendedData.toString())
+        result.success(map)
+      })
   }
 
   private reportPluginInfo(): void {

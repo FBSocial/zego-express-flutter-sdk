@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class ZegoUtils {
@@ -19,4 +22,7 @@ class ZegoUtils {
           );
         });
   }
+
+  static bool get isOHOS =>
+      !kIsWeb && Platform.operatingSystem.toLowerCase().contains('ohos');
 }

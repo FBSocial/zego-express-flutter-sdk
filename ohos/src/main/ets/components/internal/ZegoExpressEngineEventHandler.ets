@@ -104,7 +104,7 @@ export default class ZegoExpressEngineEventHandler {
 
     engine.on('onRoomStateChanged',
       (roomID: string, reason: ZegoRoomStateChangedReason, errorCode: number, extendedData: string) => {
-        zegoLogger.debug("[onRoomStateUpdate] roomID: " + roomID + ", reason: " + reason.toString() + ", errorCode:" +
+        zegoLogger.debug("[onRoomStateChanged] roomID: " + roomID + ", reason: " + reason.toString() + ", errorCode:" +
           errorCode)
         if (this.guardSink()) {
           return

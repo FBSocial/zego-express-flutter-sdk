@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:zego_express_engine/zego_express_engine.dart';
 import 'package:zego_express_engine_example/utils/zego_config.dart';
 import 'package:universal_io/io.dart';
+import 'package:zego_express_engine_example/utils/zego_utils.dart';
 
 class QuickStartPage extends StatefulWidget {
   @override
@@ -179,6 +180,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
         Platform.isAndroid ||
         Platform.isWindows ||
         Platform.isMacOS ||
+        ZegoUtils.isOHOS ||
         kIsWeb) {
       print('📥 Start playing stream, streamID');
       ZegoExpressEngine.instance.createCanvasView((viewID) {
