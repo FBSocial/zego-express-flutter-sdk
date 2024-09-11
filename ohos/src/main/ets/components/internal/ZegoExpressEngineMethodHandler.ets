@@ -21,6 +21,7 @@ import { zegoLogger } from './ZegoLog';
 import { zegoExpressEngineEventHandler } from './ZegoExpressEngineEventHandler';
 import { HashMap } from '@kit.ArkTS';
 import { zegoTextureRendererController } from './ZegoTextureRendererController';
+import { zegoPlatformViewFactory } from '../internal/ZegoPlatformViewFactory'
 
 export default class ZegoExpressEngineMethodHandler {
   private context: Context | null = null
@@ -162,17 +163,23 @@ export default class ZegoExpressEngineMethodHandler {
       let viewMode = canvasMap.get('viewMode') as ZegoViewMode
       let backgroundColor: number = canvasMap.get("backgroundColor")
       let alphaBlend: boolean = canvasMap.get("alphaBlend")
-      if (this.enablePlatformView) {
-        result.error('[startPlayingStream]', 'not support platform view', '')
+      if (!this.enablePlatformView) {
+        result.error('[startPlayingStream]', 'only support platform view', '')
         return
       }
-      let textureRenderer = zegoTextureRendererController.getTextureRenderer(viewID)
-      let zegoView: ZegoView = new ZegoView()
-      // zegoView.view = textureRenderer.surfaceID.toString()
-      zegoView.view = 'zegoView'
+      let platformView = zegoPlatformViewFactory.getPlatformView(viewID)
+      if (platformView == undefined) {
+        result.error('startPlayingStream', 'PlatformView undefined',
+          `The PlatformView for viewID:${viewID} cannot be found, developer should call createPlatformView first and get the viewID`)
+        return
+      }
+
+      let zegoView = new ZegoView()
+      zegoView.view = platformView.viewId.toString()
       zegoView.viewMode = viewMode
-      zegoView.backgroundColor = backgroundColor
+      zegoView.backgroundColor =backgroundColor
       zegoView.alphaBlend = alphaBlend
+
       ZegoExpressEngine.getInstance()?.startPlayingStream(streamID, zegoView, playerConfig)
     } else {
       ZegoExpressEngine.getInstance()?.startPlayingStream(streamID, null, playerConfig)

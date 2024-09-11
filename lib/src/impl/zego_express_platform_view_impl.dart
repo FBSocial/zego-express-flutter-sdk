@@ -20,6 +20,13 @@ class ZegoExpressPlatformViewImpl {
           onPlatformViewCreated: (int viewID) {
             onViewCreated(viewID);
           });
+    } else if (kIsOHOS) {
+      return OhosView(
+          key: key,
+          viewType: 'plugins.zego.im/zego_express_view',
+          onPlatformViewCreated: (int viewID) {
+            onViewCreated(viewID);
+          });
     }
     return null;
   }

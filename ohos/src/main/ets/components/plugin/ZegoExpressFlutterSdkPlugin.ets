@@ -11,6 +11,7 @@ import {
 import { EventSink, StreamHandler } from '@ohos/flutter_ohos/src/main/ets/plugin/common/EventChannel'
 import ZegoExpressEngineMethodHandler from '../internal/ZegoExpressEngineMethodHandler'
 import { zegoLogger } from '../internal/ZegoLog'
+import { zegoPlatformViewFactory } from '../internal/ZegoPlatformViewFactory'
 
 /** ZegoExpressFlutterSdkPlugin **/
 export default class ZegoExpressFlutterSdkPlugin implements FlutterPlugin, MethodCallHandler {
@@ -47,6 +48,9 @@ export default class ZegoExpressFlutterSdkPlugin implements FlutterPlugin, Metho
       }
     }
     this.eventChannel.setStreamHandler(streamHandler)
+
+    binding.getPlatformViewRegistry()?.registerViewFactory('plugins.zego.im/zego_express_view',
+      zegoPlatformViewFactory)
   }
 
   onDetachedFromEngine(binding: FlutterPluginBinding): void {
