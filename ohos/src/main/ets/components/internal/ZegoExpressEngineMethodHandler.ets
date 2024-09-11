@@ -44,6 +44,10 @@ export default class ZegoExpressEngineMethodHandler {
       this.createTextureRenderer(call, result)
     } else if (call.method == 'startPlayingStream') {
       this.startPlayingStream(call, result)
+    } else if (call.method == 'stopPlayingStream') {
+      this.stopPlayingStream(call, result)
+    } else if (call.method == 'destroyPlatformView') {
+      this.destroyPlatformView(call, result)
     } else {
       result.notImplemented()
     }
@@ -177,7 +181,7 @@ export default class ZegoExpressEngineMethodHandler {
       let zegoView = new ZegoView()
       zegoView.view = platformView.viewId.toString()
       zegoView.viewMode = viewMode
-      zegoView.backgroundColor =backgroundColor
+      zegoView.backgroundColor = backgroundColor
       zegoView.alphaBlend = alphaBlend
 
       ZegoExpressEngine.getInstance()?.startPlayingStream(streamID, zegoView, playerConfig)
@@ -185,6 +189,19 @@ export default class ZegoExpressEngineMethodHandler {
       ZegoExpressEngine.getInstance()?.startPlayingStream(streamID, null, playerConfig)
     }
     result.success(null)
+  }
+
+  stopPlayingStream(call: MethodCall, result: MethodResult): void {
+    let streamID: string = call.argument("streamID")
+    ZegoExpressEngine.getInstance()?.stopPlayingStream(streamID)
+    result.success(null)
+  }
+
+  destroyPlatformView(call: MethodCall, result: MethodResult): void {
+    let viewId: number = call.argument("viewID")
+    let state = zegoPlatformViewFactory.destroyPlatformView(viewId)
+    zegoLogger.debug(`[destroyPlatformView][Result] viewID: ${viewId}, success:${state} `)
+    result.success(state)
   }
 
   private reportPluginInfo(): void {

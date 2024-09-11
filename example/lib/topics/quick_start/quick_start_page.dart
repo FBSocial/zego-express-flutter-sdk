@@ -35,9 +35,9 @@ class _QuickStartPageState extends State<QuickStartPage> {
   ZegoPlayerState _playerState = ZegoPlayerState.NoPlay;
 
   TextEditingController _publishingStreamIDController =
-      new TextEditingController();
+      new TextEditingController(text: 'stream_id_001');
   TextEditingController _playingStreamIDController =
-      new TextEditingController();
+      new TextEditingController(text: 'stream_id_001');
 
   @override
   void initState() {
@@ -307,6 +307,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
         !Platform.isIOS &&
         !Platform.isMacOS &&
         !Platform.isWindows &&
+        !ZegoUtils.isOHOS &&
         !kIsWeb) {
       return;
     }
