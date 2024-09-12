@@ -16,6 +16,7 @@ import ZegoExpressEngine, {
   ZegoViewMode,
   ZegoView,
   ZegoPublishChannel,
+  ZegoPublisherConfig,
 } from '@ohos/ZegoExpressEngine';
 import { EventSink } from '@ohos/flutter_ohos/src/main/ets/plugin/common/EventChannel'
 import { zegoLogger } from './ZegoLog';
@@ -53,6 +54,10 @@ export default class ZegoExpressEngineMethodHandler {
       this.startPreview(call, result)
     } else if (call.method == 'stopPreview') {
       this.stopPreview(call, result)
+    } else if (call.method == 'startPublishingStream') {
+      this.startPublishingStream(call, result)
+    } else if (call.method == 'stopPublishingStream') {
+      this.stopPublishingStream(call, result)
     } else {
       result.notImplemented()
     }
@@ -244,6 +249,26 @@ export default class ZegoExpressEngineMethodHandler {
     let publishChannel = call.argument('channel') as ZegoPublishChannel
     ZegoExpressEngine.getInstance()?.stopPreview(publishChannel)
     result.success(null)
+  }
+
+  startPublishingStream(call: MethodCall, result: MethodResult): void {
+    let streamID = call.argument('streamID') as string
+    let publishChannel = call.argument('channel') as ZegoPublishChannel
+    let config: ZegoPublisherConfig | undefined
+    let configMap: Map<string, Object> = call.argument('config')
+    if (configMap != null && configMap.size > 0) {
+      config = new ZegoPublisherConfig()
+      config.roomID = configMap.get('roomID') as string
+      config.forceSynchronousNetworkTime = configMap.get('forceSynchronousNetworkTime') as number
+    }
+    ZegoExpressEngine.getInstance()?.startPublishingStream(streamID, config, publishChannel)
+    result.success(null)
+  }
+
+  stopPublishingStream(call: MethodCall, result: MethodResult): void {
+    let publishChannel = call.argument("channel") as ZegoPublishChannel
+    ZegoExpressEngine.getInstance()?.stopPublishingStream(publishChannel)
+    result.success(null);
   }
 
   private reportPluginInfo(): void {

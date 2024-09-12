@@ -54,10 +54,10 @@ export default class ZegoExpressEngineEventHandler {
         return
       }
       let map: HashMap<string, Any> = new HashMap()
-      map['method'] = 'onDebugError'
-      map['errorCode'] = errorCode
-      map['funcName'] = funcName
-      map['info'] = info
+      map.set('method', 'onDebugError')
+      map.set('errorCode', errorCode)
+      map.set('funcName', funcName)
+      map.set('info', info)
       this.eventSink!.success(map)
     })
 
@@ -391,42 +391,41 @@ export default class ZegoExpressEngineEventHandler {
       }
 
       let qualityMap: Map<string, Any> = new Map()
-      qualityMap["videoRecvFPS"] = quality.videoRecvFPS
-      qualityMap["videoDejitterFPS"] = quality.videoDejitterFPS
-      qualityMap["videoDecodeFPS"] = quality.videoDecodeFPS
-      qualityMap["videoRenderFPS"] = quality.videoRenderFPS
-      qualityMap["videoKBPS"] = quality.videoKBPS
-      qualityMap["videoBreakRate"] = quality.videoBreakRate
-      qualityMap["audioRecvFPS"] = quality.audioRecvFPS
-      qualityMap["audioDejitterFPS"] = quality.audioDejitterFPS
-      qualityMap["audioDecodeFPS"] = quality.audioDecodeFPS
-      qualityMap["audioRenderFPS"] = quality.audioRenderFPS
-      qualityMap["audioKBPS"] = quality.audioKBPS
-      qualityMap["audioBreakRate"] = quality.audioBreakRate
-      qualityMap["mos"] = quality.mos
-      qualityMap["rtt"] = quality.rtt
-      qualityMap["packetLostRate"] = quality.packetLostRate
-      qualityMap["peerToPeerDelay"] = quality.peerToPeerDelay
-      qualityMap["peerToPeerPacketLostRate"] = quality.peerToPeerPacketLostRate
-      qualityMap["level"] = quality.level.valueOf()
-      qualityMap["delay"] = quality.delay
-      qualityMap["avTimestampDiff"] = quality.avTimestampDiff
-      qualityMap["isHardwareDecode"] = quality.isHardwareDecode
-      qualityMap["videoCodecID"] = quality.videoCodecID.valueOf()
-      qualityMap["totalRecvBytes"] = quality.totalRecvBytes
-      qualityMap["audioRecvBytes"] = quality.audioRecvBytes
-      qualityMap["videoRecvBytes"] = quality.videoRecvBytes
-      qualityMap["audioCumulativeBreakCount"] = quality.audioCumulativeBreakCount
-      qualityMap["videoCumulativeBreakCount"] = quality.videoCumulativeBreakCount
-      qualityMap["audioCumulativeBreakTime"] = quality.audioCumulativeBreakTime
-      qualityMap["videoCumulativeBreakTime"] = quality.videoCumulativeBreakTime
-      qualityMap["audioCumulativeBreakRate"] = quality.audioCumulativeBreakRate
-      qualityMap["videoCumulativeBreakRate"] = quality.videoCumulativeBreakRate
-      qualityMap["audioCumulativeDecodeTime"] = quality.audioCumulativeDecodeTime
-      qualityMap["videoCumulativeDecodeTime"] = quality.videoCumulativeDecodeTime
-      qualityMap["muteVideo"] = quality.muteVideo
-      qualityMap["muteAudio"] = quality.muteAudio
-
+      qualityMap.set("videoRecvFPS", quality.videoRecvFPS)
+      qualityMap.set("videoDejitterFPS", quality.videoDejitterFPS)
+      qualityMap.set("videoDecodeFPS", quality.videoDecodeFPS)
+      qualityMap.set("videoRenderFPS", quality.videoRenderFPS)
+      qualityMap.set("videoKBPS", quality.videoKBPS)
+      qualityMap.set("videoBreakRate", quality.videoBreakRate)
+      qualityMap.set("audioRecvFPS", quality.audioRecvFPS)
+      qualityMap.set("audioDejitterFPS", quality.audioDejitterFPS)
+      qualityMap.set("audioDecodeFPS", quality.audioDecodeFPS)
+      qualityMap.set("audioRenderFPS", quality.audioRenderFPS)
+      qualityMap.set("audioKBPS", quality.audioKBPS)
+      qualityMap.set("audioBreakRate", quality.audioBreakRate)
+      qualityMap.set("mos", quality.mos)
+      qualityMap.set("rtt", quality.rtt)
+      qualityMap.set("packetLostRate", quality.packetLostRate)
+      qualityMap.set("peerToPeerDelay", quality.peerToPeerDelay)
+      qualityMap.set("peerToPeerPacketLostRate", quality.peerToPeerPacketLostRate)
+      qualityMap.set("level", quality.level.valueOf())
+      qualityMap.set("delay", quality.delay)
+      qualityMap.set("avTimestampDiff", quality.avTimestampDiff)
+      qualityMap.set("isHardwareDecode", quality.isHardwareDecode)
+      qualityMap.set("videoCodecID", quality.videoCodecID.valueOf())
+      qualityMap.set("totalRecvBytes", quality.totalRecvBytes)
+      qualityMap.set("audioRecvBytes", quality.audioRecvBytes)
+      qualityMap.set("videoRecvBytes", quality.videoRecvBytes)
+      qualityMap.set("audioCumulativeBreakCount", quality.audioCumulativeBreakCount)
+      qualityMap.set("videoCumulativeBreakCount", quality.videoCumulativeBreakCount)
+      qualityMap.set("audioCumulativeBreakTime", quality.audioCumulativeBreakTime)
+      qualityMap.set("videoCumulativeBreakTime", quality.videoCumulativeBreakTime)
+      qualityMap.set("audioCumulativeBreakRate", quality.audioCumulativeBreakRate)
+      qualityMap.set("videoCumulativeBreakRate", quality.videoCumulativeBreakRate)
+      qualityMap.set("audioCumulativeDecodeTime", quality.audioCumulativeDecodeTime)
+      qualityMap.set("videoCumulativeDecodeTime", quality.videoCumulativeDecodeTime)
+      qualityMap.set("muteVideo", quality.muteVideo)
+      qualityMap.set("muteAudio", quality.muteAudio)
       let map: HashMap<string, Any> = new HashMap()
       map.set('method', 'onPlayerQualityUpdate')
       map.set('streamID', streamID)
@@ -885,21 +884,21 @@ export default class ZegoExpressEngineEventHandler {
 
   private convertPublishStreamQuality(quality: ZegoPublishStreamQuality): HashMap<String, Object> {
     let qualityMap: HashMap<String, Object> = new HashMap()
-    qualityMap["videoCaptureFPS"] = quality.videoCaptureFPS
-    qualityMap["videoEncodeFPS"] = quality.videoEncodeFPS
-    qualityMap["videoSendFPS"] = quality.videoSendFPS
-    qualityMap["videoKBPS"] = quality.videoKBPS
-    qualityMap["audioCaptureFPS"] = quality.audioCaptureFPS
-    qualityMap["audioSendFPS"] = quality.audioSendFPS
-    qualityMap["audioKBPS"] = quality.audioKBPS
-    qualityMap["rtt"] = quality.rtt
-    qualityMap["packetLostRate"] = quality.packetLostRate
-    qualityMap["level"] = quality.level.valueOf()
-    qualityMap["isHardwareEncode"] = quality.isHardwareEncode
-    qualityMap["videoCodecID"] = quality.videoCodecID.valueOf()
-    qualityMap["totalSendBytes"] = quality.totalSendBytes
-    qualityMap["audioSendBytes"] = quality.audioSendBytes
-    qualityMap["videoSendBytes"] = quality.videoSendBytes
+    qualityMap.set("videoCaptureFPS", quality.videoCaptureFPS)
+    qualityMap.set("videoEncodeFPS", quality.videoEncodeFPS)
+    qualityMap.set("videoSendFPS", quality.videoSendFPS)
+    qualityMap.set("videoKBPS", quality.videoKBPS)
+    qualityMap.set("audioCaptureFPS", quality.audioCaptureFPS)
+    qualityMap.set("audioSendFPS", quality.audioSendFPS)
+    qualityMap.set("audioKBPS", quality.audioKBPS)
+    qualityMap.set("rtt", quality.rtt)
+    qualityMap.set("packetLostRate", quality.packetLostRate)
+    qualityMap.set("level", quality.level.valueOf())
+    qualityMap.set("isHardwareEncode", quality.isHardwareEncode)
+    qualityMap.set("videoCodecID", quality.videoCodecID.valueOf())
+    qualityMap.set("totalSendBytes", quality.totalSendBytes)
+    qualityMap.set("audioSendBytes", quality.audioSendBytes)
+    qualityMap.set("videoSendBytes", quality.videoSendBytes)
     return qualityMap;
   }
 
