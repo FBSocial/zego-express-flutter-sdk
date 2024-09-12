@@ -45,6 +45,8 @@ export default class ZegoExpressEngineMethodHandler {
       this.setPluginVersion(call, result)
     } else if (call.method == 'loginRoom') {
       this.loginRoom(call, result)
+    } else if (call.method == 'logoutRoom') {
+      this.logoutRoom(call, result)
     } else if (call.method == 'createTextureRenderer') {
       this.createTextureRenderer(call, result)
     } else if (call.method == 'startPlayingStream') {
@@ -174,6 +176,18 @@ export default class ZegoExpressEngineMethodHandler {
       roomConfig.token = configMap.get('token')
     }
     ZegoExpressEngine.getInstance()?.loginRoom(roomID, user, roomConfig)
+    ZegoExpressEngine.getInstance()?.on('onRoomStateUpdate',
+      (roomID: string, state: ZegoRoomState, errorCode: number, extendedData: string) => {
+        let map: HashMap<string, Any> = new HashMap()
+        map.set('errorCode', errorCode)
+        map.set('extendedData', extendedData.toString())
+        result.success(map)
+      })
+  }
+
+  logoutRoom(call: MethodCall, result: MethodResult): void {
+    let roomID: string = call.argument('roomID')
+    ZegoExpressEngine.getInstance()?.logoutRoom(roomID)
     ZegoExpressEngine.getInstance()?.on('onRoomStateUpdate',
       (roomID: string, state: ZegoRoomState, errorCode: number, extendedData: string) => {
         let map: HashMap<string, Any> = new HashMap()
