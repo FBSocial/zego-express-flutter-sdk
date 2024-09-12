@@ -65,6 +65,8 @@ export default class ZegoExpressEngineMethodHandler {
       this.destroyEngine(call, result)
     } else if (call.method == 'setEngineConfig') {
       this.setEngineConfig(call, result)
+    } else if (call.method == 'callExperimentalAPI') {
+      this.callExperimentalAPI(call, result)
     } else {
       result.notImplemented()
     }
@@ -340,6 +342,12 @@ export default class ZegoExpressEngineMethodHandler {
     } else {
       result.error("setEngineConfig_null_config".toUpperCase(), "Invoke `setEngineConfig` with null config", null)
     }
+  }
+
+  callExperimentalAPI(call: MethodCall, result: MethodResult): void {
+    let params: string = call.argument("params")
+    let callResult = ZegoExpressEngine.getInstance()?.callExperimentalAPI(params)
+    result.success(callResult)
   }
 
   private reportPluginInfo(): void {
