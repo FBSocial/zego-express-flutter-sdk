@@ -17,6 +17,7 @@ import ZegoExpressEngine, {
   ZegoView,
   ZegoPublishChannel,
   ZegoPublisherConfig,
+  ZegoLogConfig,
 } from '@ohos/ZegoExpressEngine';
 import { EventSink } from '@ohos/flutter_ohos/src/main/ets/plugin/common/EventChannel'
 import { zegoLogger } from './ZegoLog';
@@ -36,6 +37,8 @@ export default class ZegoExpressEngineMethodHandler {
     sink: EventSink | null): void {
     if (call.method == 'getVersion') {
       this.getVersion(call, result)
+    } else if (call.method == 'createEngine') {
+      this.createEngine(call, result, binding, sink)
     } else if (call.method == 'createEngineWithProfile') {
       this.createEngineWithProfile(call, result, binding, sink)
     } else if (call.method == 'setPluginVersion') {
@@ -60,6 +63,8 @@ export default class ZegoExpressEngineMethodHandler {
       this.stopPublishingStream(call, result)
     } else if (call.method == 'destroyEngine') {
       this.destroyEngine(call, result)
+    } else if (call.method == 'setEngineConfig') {
+      this.setEngineConfig(call, result)
     } else {
       result.notImplemented()
     }
@@ -69,7 +74,7 @@ export default class ZegoExpressEngineMethodHandler {
     result.success(ZegoExpressEngine.getSDKVersion())
   }
 
-  createEngineWithProfile(call: MethodCall, result: MethodResult, binding: FlutterPluginBinding | null,
+  createEngine(call: MethodCall, result: MethodResult, binding: FlutterPluginBinding | null,
     sink: EventSink | null): void {
     if (binding == null) {
       zegoLogger.error('[createEngine] FlutterPluginBinding is null');
@@ -83,6 +88,43 @@ export default class ZegoExpressEngineMethodHandler {
     }
 
     this.reportPluginInfo();
+
+    this.pluginBinding = binding
+    this.context = binding?.getApplicationContext() ?? null
+    this.textureRegistry = binding?.getTextureRegistry() ?? null
+    zegoExpressEngineEventHandler.eventSink = sink
+
+    let appID: number = call.argument('appID')
+    let appSign: string = call.argument('appSign')
+    let isTestEnv: boolean = call.argument('isTestEnv')
+    let scenarioValue = Math.min(10, Math.max(0, call.argument('scenario')))
+    let zegoScenario: ZegoScenario = scenarioValue as ZegoScenario
+    this.enablePlatformView = call.argument('enablePlatformView')
+
+    let profile: ZegoEngineProfile = new ZegoEngineProfile(appID, appSign, zegoScenario, this.context)
+    ZegoExpressEngine.createEngine(profile).then((engineInstance) => {
+      if (engineInstance != null) {
+        zegoLogger.debug('create Engine successful!')
+        zegoExpressEngineEventHandler.initSDKEvent(engineInstance)
+      }
+    })
+    result.success(null)
+  }
+
+  createEngineWithProfile(call: MethodCall, result: MethodResult, binding: FlutterPluginBinding | null,
+    sink: EventSink | null): void {
+    if (binding == null) {
+      zegoLogger.error('[createEngine] FlutterPluginBinding is null')
+      result.success(null)
+      return
+    }
+    if (sink == null) {
+      zegoLogger.error('[createEngine] FlutterEventSink or FlutterPluginBinding is null')
+      result.success(null)
+      return
+    }
+
+    this.reportPluginInfo()
 
     this.pluginBinding = binding
     this.context = binding?.getApplicationContext() ?? null
@@ -103,7 +145,7 @@ export default class ZegoExpressEngineMethodHandler {
         zegoExpressEngineEventHandler.initSDKEvent(engineInstance)
       }
     })
-    result.success(null);
+    result.success(null)
   }
 
   setPluginVersion(call: MethodCall, result: MethodResult): void {
@@ -276,6 +318,28 @@ export default class ZegoExpressEngineMethodHandler {
   destroyEngine(call: MethodCall, result: MethodResult): void {
     ZegoExpressEngine.destroyEngine()
     result.success(null)
+  }
+
+  setEngineConfig(call: MethodCall, result: MethodResult): void {
+    this.reportPluginInfo()
+    let configMap: Map<string, Object> = call.argument('config')
+    if (configMap != null && configMap.size > 0) {
+      let configObject = new ZegoEngineConfig()
+      configObject.advancedConfig = configMap["advancedConfig"] as Map<string, string>
+      // let  logConfigMap =configMap.get("logConfig") as Map<string, Object>
+      // if (logConfigMap != null && logConfigMap.size>0) {
+      //   let logConfigObject = new ZegoLogConfig()
+      //   logConfigObject.logPath =  logConfigMap.get("logPath") as string
+      //   logConfigObject.logSize  = logConfigMap.get("logSize") as number
+      //   logConfigObject.logCount =  logConfigMap.get("logCount") as number
+      //   configObject.logConfig = logConfigObject;
+      // }
+      //
+      ZegoExpressEngine.setEngineConfig(configObject)
+      result.success(null)
+    } else {
+      result.error("setEngineConfig_null_config".toUpperCase(), "Invoke `setEngineConfig` with null config", null)
+    }
   }
 
   private reportPluginInfo(): void {
