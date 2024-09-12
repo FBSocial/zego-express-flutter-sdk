@@ -147,6 +147,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
     if (!Platform.isAndroid &&
         !Platform.isIOS &&
         !Platform.isMacOS &&
+        !ZegoUtils.isOHOS &&
         !kIsWeb) {
       return;
     }
@@ -289,6 +290,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
         !Platform.isIOS &&
         !Platform.isMacOS &&
         !Platform.isWindows &&
+        !ZegoUtils.isOHOS &&
         !kIsWeb) {
       return;
     }

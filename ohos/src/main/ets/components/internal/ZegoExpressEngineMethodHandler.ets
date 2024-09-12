@@ -51,6 +51,8 @@ export default class ZegoExpressEngineMethodHandler {
       this.destroyPlatformView(call, result)
     } else if (call.method == 'startPreview') {
       this.startPreview(call, result)
+    } else if (call.method == 'stopPreview') {
+      this.stopPreview(call, result)
     } else {
       result.notImplemented()
     }
@@ -238,6 +240,11 @@ export default class ZegoExpressEngineMethodHandler {
     result.success(null)
   }
 
+  stopPreview(call: MethodCall, result: MethodResult): void {
+    let publishChannel = call.argument('channel') as ZegoPublishChannel
+    ZegoExpressEngine.getInstance()?.stopPreview(publishChannel)
+    result.success(null)
+  }
 
   private reportPluginInfo(): void {
     if (this.pluginReported) {
