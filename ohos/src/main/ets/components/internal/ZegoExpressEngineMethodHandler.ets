@@ -58,6 +58,8 @@ export default class ZegoExpressEngineMethodHandler {
       this.startPublishingStream(call, result)
     } else if (call.method == 'stopPublishingStream') {
       this.stopPublishingStream(call, result)
+    } else if (call.method == 'destroyEngine') {
+      this.destroyEngine(call, result)
     } else {
       result.notImplemented()
     }
@@ -268,7 +270,12 @@ export default class ZegoExpressEngineMethodHandler {
   stopPublishingStream(call: MethodCall, result: MethodResult): void {
     let publishChannel = call.argument("channel") as ZegoPublishChannel
     ZegoExpressEngine.getInstance()?.stopPublishingStream(publishChannel)
-    result.success(null);
+    result.success(null)
+  }
+
+  destroyEngine(call: MethodCall, result: MethodResult): void {
+    ZegoExpressEngine.destroyEngine()
+    result.success(null)
   }
 
   private reportPluginInfo(): void {
