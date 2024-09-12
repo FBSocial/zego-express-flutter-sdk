@@ -15,11 +15,7 @@ export default class ZegoTextureRenderer {
     this.surfaceID = this.textureEntry.getSurfaceId()
     this.viewWidth = viewWidth
     this.viewHeight = viewHeight
-
     zegoLogger.debug('[ZegoTextureRenderer] [init] renderer')
-
-    let flutterRenderer = textureRegistry as FlutterRenderer
-    flutterRenderer.setTextureBufferSize(this.textureID, 240, 360)
   }
 
   updateRenderSize(width: number, height: number) {
