@@ -50,7 +50,7 @@
       {
         "name": "ohos.permission.MICROPHONE",
         // 麦克风权限
-        "reason": "$string:app_name",
+        "reason": "$string:mic_permission_reason",
         "usedScene": {
           "abilities": [
             "EntryAbility"
@@ -72,7 +72,7 @@
       {
         "name": "ohos.permission.CAMERA",
         // 摄像头权限
-        "reason": "$string:app_name",
+        "reason": "$string:camera_permission_reason",
         "usedScene": {
           "abilities": [
             "EntryAbility"

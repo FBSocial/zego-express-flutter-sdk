@@ -3,6 +3,14 @@
     {
       "name": "app_name",
       "value": "zego_express_flutter_sdk_example"
+    },
+    {
+      "name": "camera_permission_reason",
+      "value": "摄像头权限用于直播"
+    },
+    {
+      "name": "mic_permission_reason",
+      "value": "麦克风权限用于直播"
     }
   ]
 }

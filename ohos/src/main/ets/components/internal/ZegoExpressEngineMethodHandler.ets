@@ -15,6 +15,7 @@ import ZegoExpressEngine, {
   ZegoCDNConfig,
   ZegoViewMode,
   ZegoView,
+  ZegoPublishChannel,
 } from '@ohos/ZegoExpressEngine';
 import { EventSink } from '@ohos/flutter_ohos/src/main/ets/plugin/common/EventChannel'
 import { zegoLogger } from './ZegoLog';
@@ -48,6 +49,8 @@ export default class ZegoExpressEngineMethodHandler {
       this.stopPlayingStream(call, result)
     } else if (call.method == 'destroyPlatformView') {
       this.destroyPlatformView(call, result)
+    } else if (call.method == 'startPreview') {
+      this.startPreview(call, result)
     } else {
       result.notImplemented()
     }
@@ -203,6 +206,38 @@ export default class ZegoExpressEngineMethodHandler {
     zegoLogger.debug(`[destroyPlatformView][Result] viewID: ${viewId}, success:${state} `)
     result.success(state)
   }
+
+  startPreview(call: MethodCall, result: MethodResult): void {
+    let publishChannel = call.argument('channel') as ZegoPublishChannel
+    let canvasMap: Map<string, Object> = call.argument('canvas')
+    if (canvasMap != null && canvasMap.size > 0) {
+      let viewId = canvasMap.get('view') as number
+      let viewMode = canvasMap.get('viewMode') as ZegoViewMode
+      let backgroundColor = canvasMap.get('backgroundColor') as number
+      let alphaBlend = canvasMap.get('alphaBlend') as boolean
+      if (!this.enablePlatformView) {
+        result.error('[startPreview]', 'only support platform view', '')
+        return
+      }
+      let platformView = zegoPlatformViewFactory.getPlatformView(viewId)
+      if (platformView == undefined) {
+        result.error('startPreview', 'PlatformView undefined',
+          `The PlatformView for viewID:${viewId} cannot be found, developer should call createPlatformView first and get the viewID`)
+        return
+      }
+      let zegoView = new ZegoView()
+      zegoView.view = platformView.viewId.toString()
+      zegoView.viewMode = viewMode
+      zegoView.backgroundColor = backgroundColor
+      zegoView.alphaBlend = alphaBlend
+      ZegoExpressEngine.getInstance()?.startPreview(zegoView, publishChannel)
+
+    } else {
+      ZegoExpressEngine.getInstance()?.startPreview(null, publishChannel)
+    }
+    result.success(null)
+  }
+
 
   private reportPluginInfo(): void {
     if (this.pluginReported) {

@@ -128,6 +128,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
         Platform.isAndroid ||
         Platform.isWindows ||
         Platform.isMacOS ||
+        ZegoUtils.isOHOS ||
         kIsWeb) {
       ZegoExpressEngine.instance.createCanvasView((viewID) {
         _previewViewID = viewID;
