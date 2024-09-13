@@ -17,7 +17,10 @@ import ZegoExpressEngine, {
   ZegoView,
   ZegoPublishChannel,
   ZegoPublisherConfig,
-  ZegoLogConfig,
+  ZegoVideoConfig,
+  ZegoNetworkSpeedTestConfig,
+  ZegoAudioRoute,
+  ZegoVideoMirrorMode
 } from '@ohos/ZegoExpressEngine';
 import { EventSink } from '@ohos/flutter_ohos/src/main/ets/plugin/common/EventChannel'
 import { zegoLogger } from './ZegoLog';
@@ -69,6 +72,34 @@ export default class ZegoExpressEngineMethodHandler {
       this.setEngineConfig(call, result)
     } else if (call.method == 'callExperimentalAPI') {
       this.callExperimentalAPI(call, result)
+    } else if (call.method == 'setVideoConfig') {
+      this.setVideoConfig(call, result)
+    } else if (call.method == 'enableAGC') {
+      this.enableAGC(call, result)
+    } else if (call.method == 'setCaptureVolume') {
+      this.setCaptureVolume(call, result)
+    } else if (call.method == 'enableCamera') {
+      this.enableCamera(call, result)
+    } else if (call.method == 'setStreamExtraInfo') {
+      this.setStreamExtraInfo(call, result)
+    } else if (call.method == 'startNetworkSpeedTest') {
+      this.startNetworkSpeedTest(call, result)
+    } else if (call.method == 'stopNetworkSpeedTest') {
+      this.stopNetworkSpeedTest(call, result)
+    } else if (call.method == 'getAudioRouteType') {
+      this.getAudioRouteType(call, result)
+    } else if (call.method == 'setAudioRouteToSpeaker') {
+      this.setAudioRouteToSpeaker(call, result)
+    } else if (call.method == 'enableHardwareEncoder') {
+      this.enableHardwareEncoder(call, result)
+    } else if (call.method == 'enableHardwareDecoder') {
+      this.enableHardwareDecoder(call, result)
+    } else if (call.method == 'muteMicrophone') {
+      this.muteMicrophone(call, result)
+    } else if (call.method == 'setVideoMirrorMode') {
+      this.setVideoMirrorMode(call, result)
+    } else if (call.method == 'useFrontCamera') {
+      this.useFrontCamera(call, result)
     } else {
       result.notImplemented()
     }
@@ -362,6 +393,136 @@ export default class ZegoExpressEngineMethodHandler {
     let params: string = call.argument("params")
     let callResult = ZegoExpressEngine.getInstance()?.callExperimentalAPI(params)
     result.success(callResult)
+  }
+
+  setVideoConfig(call: MethodCall, result: MethodResult): void {
+    let configMap: Map<string, Object> = call.argument('config')
+    if (configMap == undefined || configMap.size <= 0) {
+      result.error("setVideoConfig_Null_Config".toUpperCase(), "[setVideoConfig] Null config", null);
+      return
+    }
+
+    let captureWidth = configMap.get('captureWidth') as number
+    let captureHeight = configMap.get('captureHeight') as number
+    let encodeWidth = configMap.get('encodeWidth') as number
+    let encodeHeight = configMap.get('encodeHeight') as number
+    let fps = configMap.get('fps') as number
+    let bitrate = configMap.get('bitrate') as number
+    let codecID = configMap.get('codecID') as number
+
+    let config: ZegoVideoConfig = new ZegoVideoConfig()
+    config.captureWidth = captureWidth
+    config.captureHeight = captureHeight
+    config.encodeWidth = encodeWidth
+    config.encodeHeight = encodeHeight
+    config.fps = fps
+    config.bitrate = bitrate
+    if (codecID >= 5) {
+      config.codecID = ZegoVideoCodecID.Unknown
+    } else {
+      config.codecID = codecID as ZegoVideoCodecID
+    }
+    if (configMap.has("keyFrameInterval") && configMap.get("keyFrameInterval") != undefined) {
+      config.keyFrameInterval = configMap.get("keyFrameInterval") as number
+    }
+    let channel = call.argument("channel") as ZegoPublishChannel
+    ZegoExpressEngine.getInstance()?.setVideoConfig(config, channel)
+    result.success(null)
+  }
+
+  enableAGC(call: MethodCall, result: MethodResult): void {
+    let enable = call.argument('enable') as boolean
+    ZegoExpressEngine.getInstance()?.enableAGC(enable)
+    result.success(null)
+  }
+
+  setCaptureVolume(call: MethodCall, result: MethodResult): void {
+    let volume = call.argument('volume') as number
+    ZegoExpressEngine.getInstance()?.setCaptureVolume(volume)
+    result.success(null)
+  }
+
+  enableCamera(call: MethodCall, result: MethodResult): void {
+    let enable = call.argument('enable') as boolean
+    let channel = call.argument('channel') as ZegoPublishChannel
+    ZegoExpressEngine.getInstance()?.enableCamera(enable, channel)
+    result.success(null)
+  }
+
+  setStreamExtraInfo(call: MethodCall, result: MethodResult): void {
+    let extraInfo = call.argument('extraInfo') as string
+    let channel = call.argument('channel') as ZegoPublishChannel
+    ZegoExpressEngine.getInstance()?.setStreamExtraInfo(extraInfo, channel).then((value) => {
+      let resultMap: HashMap<string, Object> = new HashMap()
+      resultMap.set('errorCode', value.errorCode)
+      result.success(resultMap)
+    })
+  }
+
+  startNetworkSpeedTest(call: MethodCall, result: MethodResult): void {
+    let configMap: Map<string, Object> = call.argument("config")
+    if (configMap == null || configMap.size <= 0) {
+      result.error("startNetworkSpeedTest_Null_Config".toUpperCase(), "[startNetworkSpeedTest] Null config", null)
+      return
+    }
+
+    let config = new ZegoNetworkSpeedTestConfig()
+    config.testUplink = configMap.get("testUplink") as boolean
+    config.expectedUplinkBitrate = call.argument("expectedUplinkBitrate") as number
+    config.testDownlink = configMap.get("testDownlink") as boolean
+    config.expectedDownlinkBitrate = call.argument("expectedDownlinkBitrate") as number
+
+    let interval = call.argument("interval") as number
+    ZegoExpressEngine.getInstance()?.startNetworkSpeedTest(config, interval)
+    result.success(null)
+  }
+
+  stopNetworkSpeedTest(call: MethodCall, result: MethodResult): void {
+    ZegoExpressEngine.getInstance()?.stopNetworkSpeedTest()
+    result.success(null)
+  }
+
+  getAudioRouteType(call: MethodCall, result: MethodResult): void {
+    let route = ZegoExpressEngine.getInstance()?.getAudioRouteType()
+    result.success(route == null ? 0 : (route as number))
+  }
+
+  setAudioRouteToSpeaker(call: MethodCall, result: MethodResult): void {
+    let defaultToSpeaker = call.argument('defaultToSpeaker') as boolean
+    ZegoExpressEngine.getInstance()?.setAudioRouteToSpeaker(defaultToSpeaker)
+    result.success(null)
+  }
+
+  enableHardwareEncoder(call: MethodCall, result: MethodResult): void {
+    let enable = call.argument('enable') as boolean
+    ZegoExpressEngine.getInstance()?.enableHardwareEncoder(enable)
+    result.success(null)
+  }
+
+  enableHardwareDecoder(call: MethodCall, result: MethodResult): void {
+    let enable = call.argument('enable') as boolean
+    ZegoExpressEngine.getInstance()?.enableHardwareDecoder(enable)
+    result.success(null)
+  }
+
+  muteMicrophone(call: MethodCall, result: MethodResult): void {
+    let mute = call.argument('mute') as boolean
+    ZegoExpressEngine.getInstance()?.muteMicrophone(mute)
+    result.success(null)
+  }
+
+  setVideoMirrorMode(call: MethodCall, result: MethodResult): void {
+    let mirrorMode = call.argument('mirrorMode') as ZegoVideoMirrorMode
+    let channel = call.argument('channel') as ZegoPublishChannel
+    ZegoExpressEngine.getInstance()?.setVideoMirrorMode(mirrorMode, channel)
+    result.success(null);
+  }
+
+  useFrontCamera(call: MethodCall, result: MethodResult): void {
+    let enable = call.argument('enable') as boolean
+    let channel = call.argument('channel') as ZegoPublishChannel
+    ZegoExpressEngine.getInstance()?.useFrontCamera(enable, channel)
+    result.success(null)
   }
 
   private reportPluginInfo(): void {
