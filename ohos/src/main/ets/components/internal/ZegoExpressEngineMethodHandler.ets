@@ -20,7 +20,8 @@ import ZegoExpressEngine, {
   ZegoVideoConfig,
   ZegoNetworkSpeedTestConfig,
   ZegoAudioRoute,
-  ZegoVideoMirrorMode
+  ZegoVideoMirrorMode,
+  ZegoRoomStateChangedReason,
 } from '@ohos/ZegoExpressEngine';
 import { EventSink } from '@ohos/flutter_ohos/src/main/ets/plugin/common/EventChannel'
 import { zegoLogger } from './ZegoLog';
@@ -207,8 +208,8 @@ export default class ZegoExpressEngineMethodHandler {
       roomConfig.token = configMap.get('token')
     }
     ZegoExpressEngine.getInstance()?.loginRoom(roomID, user, roomConfig)
-    ZegoExpressEngine.getInstance()?.on('onRoomStateUpdate',
-      (roomID: string, state: ZegoRoomState, errorCode: number, extendedData: string) => {
+    ZegoExpressEngine.getInstance()?.on('onRoomStateChanged',
+      (roomID: string, reason: ZegoRoomStateChangedReason, errorCode: number, extendedData: string) => {
         let map: HashMap<string, Any> = new HashMap()
         map.set('errorCode', errorCode)
         map.set('extendedData', extendedData.toString())
@@ -219,8 +220,8 @@ export default class ZegoExpressEngineMethodHandler {
   logoutRoom(call: MethodCall, result: MethodResult): void {
     let roomID: string = call.argument('roomID')
     ZegoExpressEngine.getInstance()?.logoutRoom(roomID)
-    ZegoExpressEngine.getInstance()?.on('onRoomStateUpdate',
-      (roomID: string, state: ZegoRoomState, errorCode: number, extendedData: string) => {
+    ZegoExpressEngine.getInstance()?.on('onRoomStateChanged',
+      (roomID: string, reason: ZegoRoomStateChangedReason, errorCode: number, extendedData: string) => {
         let map: HashMap<string, Any> = new HashMap()
         map.set('errorCode', errorCode)
         map.set('extendedData', extendedData.toString())
@@ -392,7 +393,7 @@ export default class ZegoExpressEngineMethodHandler {
   callExperimentalAPI(call: MethodCall, result: MethodResult): void {
     let params: string = call.argument("params")
     let callResult = ZegoExpressEngine.getInstance()?.callExperimentalAPI(params)
-    result.success(callResult)
+    result.success(callResult?.toString() ?? '')
   }
 
   setVideoConfig(call: MethodCall, result: MethodResult): void {
