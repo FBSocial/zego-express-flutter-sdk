@@ -248,18 +248,21 @@ export default class ZegoExpressEngineMethodHandler {
       playerConfig = new ZegoPlayerConfig()
       playerConfig.resourceMode = playerConfigMap.get('resourceMode') as ZegoStreamResourceMode
       playerConfig.videoCodecID = playerConfigMap.get("videoCodecID") as ZegoVideoCodecID
-      playerConfig.roomID = playerConfigMap.get('roomID')
-      playerConfig.sourceResourceType = playerConfigMap.get("sourceResourceType") as ZegoResourceType
-      playerConfig.codecTemplateID = playerConfigMap.get("codecTemplateID")
-      playerConfig.resourceSwitchMode = playerConfigMap.get("resourceSwitchMode") as ZegoStreamResourceSwitchMode
-      playerConfig.resourceWhenStopPublish = playerConfigMap.get("resourceWhenStopPublish") as ZegoStreamResourceType
-      let cdnConfigMap: Map<string, Any> | null = call.argument('cdnConfig')
-      if (cdnConfigMap != null && cdnConfigMap.size > 0) {
-        let cdnConfig = new ZegoCDNConfig()
-        cdnConfig.url = cdnConfigMap.get('url')
-        cdnConfig.authParam = cdnConfigMap.get('authParam')
-        playerConfig.cdnConfig = cdnConfig
+      if (playerConfig.videoCodecID >= 5) {
+        playerConfig.videoCodecID = ZegoVideoCodecID.Unknown
       }
+      // playerConfig.roomID = playerConfigMap.get('roomID')
+      // playerConfig.sourceResourceType = playerConfigMap.get("sourceResourceType") as ZegoResourceType
+      // playerConfig.codecTemplateID = playerConfigMap.get("codecTemplateID")
+      // playerConfig.resourceSwitchMode = playerConfigMap.get("resourceSwitchMode") as ZegoStreamResourceSwitchMode
+      // playerConfig.resourceWhenStopPublish = playerConfigMap.get("resourceWhenStopPublish") as ZegoStreamResourceType
+      // let cdnConfigMap: Map<string, Any> | null = call.argument('cdnConfig')
+      // if (cdnConfigMap != null && cdnConfigMap.size > 0) {
+      //   let cdnConfig = new ZegoCDNConfig()
+      //   cdnConfig.url = cdnConfigMap.get('url')
+      //   cdnConfig.authParam = cdnConfigMap.get('authParam')
+      //   playerConfig.cdnConfig = cdnConfig
+      // }
     }
 
     // ZegoCanvas
