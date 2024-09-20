@@ -212,7 +212,7 @@ export default class ZegoExpressEngineMethodHandler {
       (roomID: string, reason: ZegoRoomStateChangedReason, errorCode: number, extendedData: string) => {
         let map: HashMap<string, Any> = new HashMap()
         map.set('errorCode', errorCode)
-        map.set('extendedData', extendedData.toString())
+        map.set('extendedData', (extendedData == undefined || extendedData.length == 0) ? '{}' : extendedData)
         result.success(map)
       })
   }
@@ -224,7 +224,7 @@ export default class ZegoExpressEngineMethodHandler {
       (roomID: string, reason: ZegoRoomStateChangedReason, errorCode: number, extendedData: string) => {
         let map: HashMap<string, Any> = new HashMap()
         map.set('errorCode', errorCode)
-        map.set('extendedData', extendedData.toString())
+        map.set('extendedData', (extendedData == undefined || extendedData.length == 0) ? '{}' : extendedData)
         result.success(map)
       })
   }
