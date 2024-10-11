@@ -496,7 +496,7 @@ export default class ZegoExpressEngineMethodHandler {
     let channel = call.argument('channel') as ZegoPublishChannel
     ZegoExpressEngine.getInstance()?.setStreamExtraInfo(extraInfo, channel).then((value) => {
       let resultMap: HashMap<string, Object> = new HashMap()
-      resultMap.set('errorCode', value.errorCode)
+      resultMap.set('errorCode', value)
       result.success(resultMap)
     })
   }
