@@ -24,7 +24,7 @@ import ZegoExpressEngine, {
   ZegoAudioChannel,
   ZegoAudioCodecID,
   ZegoSoundLevelConfig,
-} from '@ohos/ZegoExpressEngine';
+} from 'ZegoExpressEngine';
 import { EventSink } from '@ohos/flutter_ohos/src/main/ets/plugin/common/EventChannel'
 import { zegoLogger } from './ZegoLog';
 import { zegoExpressEngineEventHandler } from './ZegoExpressEngineEventHandler';

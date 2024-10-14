@@ -29,7 +29,7 @@ import ZegoExpressEngine, {
   ZegoNetworkSpeedTestType,
   ZegoStreamQualityLevel,
   ZegoBarrageMessageInfo,
-} from '@ohos/ZegoExpressEngine';
+} from 'ZegoExpressEngine';
 import { zegoLogger } from './ZegoLog'
 import { ArrayList, HashMap } from '@kit.ArkTS';
 

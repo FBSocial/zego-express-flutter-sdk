@@ -1,5 +1,5 @@
 {
-  "name": "zego_express_flutter_sdk",
+  "name": "zego_express_engine",
   "version": "1.0.0",
   "description": "Please describe the basic information.",
   "main": "index.ets",
@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ohos/flutter_ohos": "file:./har/flutter.har",
-    "@ohos/ZegoExpressEngine": "file:./har/ZegoExpressEngine.har"
+    "ZegoExpressEngine": "file:./har/ZegoExpressEngine.har"
   },
   "metadata": {
     "sourceRoots": [
