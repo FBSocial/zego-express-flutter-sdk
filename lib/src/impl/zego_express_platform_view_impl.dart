@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zego_express_engine/src/wrap_platform_view/widgets/platform_view.dart' as wrap_platform_view;
 import '../utils/zego_express_utils.dart';
 
 /// Native implementation of [createPlatformView]
@@ -21,7 +22,7 @@ class ZegoExpressPlatformViewImpl {
             onViewCreated(viewID);
           });
     } else if (kIsOHOS) {
-      return OhosView(
+      return wrap_platform_view.OhosView(
           key: key,
           viewType: 'plugins.zego.im/zego_express_view',
           onPlatformViewCreated: (int viewID) {
